@@ -1,6 +1,6 @@
 # comment
 
-1+2*3
+-01++002.3*-03e+04
 
 vimfiles = [ filetype.vim syntax.vim ]
 
@@ -14,14 +14,12 @@ files = [
 	vimfiles
 ]
 
-touch@files
-
-file@bat.bat = [
+bat.bat = file @ [
 	@start .
 	@gvim -p files
 ]
 
-.gitignore = [
+.gitignore = file @ [
 	*~
 	*.swp
 	*.exe
