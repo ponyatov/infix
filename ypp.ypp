@@ -1,0 +1,35 @@
+%{
+#include "hpp.hpp"
+%}
+%defines %union { Sym*o; }
+%token <o> SYM NUM STR			/* symbol number string		*/
+%token <o> LP RP LQ RQ			/* () []					*/
+%token <o> ADD SUB MUL DIV POW	/* + - * / ^				*/
+%token <o> EQ AT TILD			/* = @ ~					*/
+%type <o> ex scalar vector		/* expression scalar vector	*/
+
+%left ADD SUB
+%left MUL DIV
+%left POW
+%left PFX
+%%
+REPL : | REPL ex 			{ cout << $2->eval(&env)->dump() << endl; } ;
+scalar : SYM | NUM | STR ;
+ex : scalar
+   	| TILD ex				{ $$=$1; $2->push($2); }
+	| LP ex RP				{ $$=$2; }
+	| LQ vector RQ			{ $$=$2; }
+	| ex EQ ex				{ $$=$2; $2->push($1); $2->push($3); }
+	| ex AT ex				{ $$=$2; $2->push($1); $2->push($3); }
+	| ADD ex %prec PFX		{ $$=$1; $1->push($2); }
+	| SUB ex %prec PFX		{ $$=$1; $1->push($2); }
+	| ex ADD ex				{ $$=$2; $2->push($1); $2->push($3); }
+	| ex SUB ex				{ $$=$2; $2->push($1); $2->push($3); }
+	| ex MUL ex				{ $$=$2; $2->push($1); $2->push($3); }
+	| ex DIV ex				{ $$=$2; $2->push($1); $2->push($3); }
+	| ex POW ex				{ $$=$2; $2->push($1); $2->push($3); }
+;
+vector :					{ $$=new Vector(); $$->line=yylineno; }
+	| vector ex				{ $$=$1; $1->push($2); }
+;
+%%

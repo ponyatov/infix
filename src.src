@@ -1,30 +1,22 @@
 # comment
 
--01++002.3*-03e+04
+[	-01++002.3*-03e+04	4*5+6	0xFF/0b1101 ]	# numbers
 
-vimfiles = [ filetype.vim syntax.vim ]
+vimfiles	= [ filetype.vim syntax.vim										]
+core		= [ src.src log.log ypp.ypp lpp.lpp hpp.hpp cpp.cpp Makefile	]
+files		= [ core .gitignore bat.bat vimfiles							]
 
-core = [
-	src.src log.log ypp.ypp lpp.lpp hpp.hpp cpp.cpp Makefile
-]
+bat.bat		= file @ [
+	'@start .'
+	'@gvim -p '+files/SP
+]/EOL
 
-files = [
-	core
-	.gitignore bat.bat
-	vimfiles
-]
-
-bat.bat = file @ [
-	@start .
-	@gvim -p files
-]
-
-.gitignore = file @ [
-	*~
-	*.swp
-	*.exe
-	*.log
-	ypp.tab.?pp
+.gitignore	= file @ [
+	'*~'
+	'*.swp'
+	exe.exe
+	log.log
+	ypp.tab.cpp ypp.tab.hpp
 	lex.yy.c
-]
+]/EOL
 
