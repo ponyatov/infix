@@ -26,20 +26,43 @@ Sym* Sym::eval(Env*env) {
 Sym* Sym::pfxadd() { return new Sym("+"+val); }
 Sym* Sym::pfxsub() { return new Sym("-"+val); }
 
+Sym* Sym::add(Sym*o) { return new Error(head()+" + "+o->head()); }
+Sym* Sym::mul(Sym*o) { return new Error(head()+" * "+o->head()); }
+
 Scalar::Scalar(string T,string V):Sym(T,V){}
 Sym* Scalar::eval(Env*e) { return this; }
 
+Error::Error(string V):Scalar("error",V) { yyerror(val); }
+
 Num::Num(string V):Scalar("num",V){ val=atof(V.c_str()); }
+Num::Num(float F):Scalar("num","") { val=F; }
 string Num::head() { ostringstream os;
 	os<<"<"<<tag<<":"<<val<<"> line:"<<line; return os.str(); }
 Sym* Num::pfxadd() { val=+val; return this; }
 Sym* Num::pfxsub() { val=-val; return this; }
+Sym* Num::add(Sym*o) {
+	if (o->tag=="int")	return new Num(val + dynamic_cast<Int*>(o)->val);
+	if (o->tag=="num")	return new Num(val + dynamic_cast<Num*>(o)->val);
+	else				return Sym::mul(o); }
+Sym* Num::mul(Sym*o) {
+	if (o->tag=="int")	return new Num(val * dynamic_cast<Int*>(o)->val);
+	if (o->tag=="num")	return new Num(val * dynamic_cast<Num*>(o)->val);
+	else				return Sym::mul(o); }
 
 Int::Int(string V):Scalar("int",V){ val=atoi(V.c_str()); }
+Int::Int(int I):Scalar("int","") { val=I; }
 string Int::head() { ostringstream os;
 	os<<"<"<<tag<<":"<<val<<"> line:"<<line; return os.str(); }
 Sym* Int::pfxadd() { val=+val; return this; }
 Sym* Int::pfxsub() { val=-val; return this; }
+Sym* Int::add(Sym*o) {
+	if (o->tag=="int")	return new Int(val + dynamic_cast<Int*>(o)->val);
+	if (o->tag=="num")	return new Num(val + dynamic_cast<Num*>(o)->val);
+	else				return Sym::mul(o); }
+Sym* Int::mul(Sym*o) {
+	if (o->tag=="int")	return new Int(val * dynamic_cast<Int*>(o)->val);
+	if (o->tag=="num")	return new Num(val * dynamic_cast<Num*>(o)->val);
+	else				return Sym::mul(o); }
 
 Hex::Hex(string V):Scalar("hex",V){}
 Bin::Bin(string V):Scalar("bin",V){}
@@ -54,6 +77,10 @@ Sym* Op::eval(Env*env) {
 	if (nest.size()==1) {
 		if (val=="+") return nest[0]->pfxadd();
 		if (val=="-") return nest[0]->pfxsub();
+	}
+	if (nest.size()==2) {
+		if (val=="+") return nest[0]->add(nest[1]);
+		if (val=="*") return nest[0]->mul(nest[1]);
 	}
 	return this;
 }

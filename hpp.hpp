@@ -15,17 +15,22 @@ struct Sym {
 	map<string,Sym*> lookup;
 	virtual string head(); string pad(int); virtual string dump(int=0);
 	virtual Sym* eval(Env*);
-	virtual Sym* pfxadd(); virtual Sym* pfxsub();
+	virtual Sym* pfxadd();	virtual Sym* pfxsub();
+	virtual Sym* add(Sym*);	virtual Sym* mul(Sym*);
 };
 struct Env:Sym { Env(string); };
 extern Env env;
 
 struct Scalar:Sym { Scalar(string,string); Sym*eval(Env*); };
 
-struct Num:Scalar { Num(string); float val; string head();
-	Sym* pfxadd(); Sym* pfxsub(); };
-struct Int:Scalar { Int(string); int val; string head();
-	Sym* pfxadd(); Sym* pfxsub(); };
+struct Error:Scalar { Error(string); };
+
+struct Num:Scalar { Num(string); Num(float); float val; string head();
+	Sym* pfxadd(); Sym* pfxsub();
+	Sym* add(Sym*);	Sym* mul(Sym*); };
+struct Int:Scalar { Int(string); Int(int); int val; string head();
+	Sym* pfxadd(); Sym* pfxsub();
+	Sym* add(Sym*);	Sym* mul(Sym*); };
 struct Hex:Scalar { Hex(string); };
 struct Bin:Scalar { Bin(string); };
 
