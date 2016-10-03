@@ -1,10 +1,8 @@
 # comment
 
-1+2*3
+[	-01++002.3*-03e+04	4*5+6	0xFF/0b1101 ]	# numbers
 
 .end
-
-[	-01++002.3*-03e+04	4*5+6	0xFF/0b1101 ]	# numbers
 
 vimfiles	= [ filetype.vim syntax.vim										]
 core		= [ src.src log.log ypp.ypp lpp.lpp hpp.hpp cpp.cpp Makefile	]

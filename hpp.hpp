@@ -12,16 +12,20 @@ struct Env;
 struct Sym {
 	string tag,val; Sym(string,string); Sym(string); int line;
 	vector<Sym*> nest; void push(Sym*);
+	map<string,Sym*> lookup;
 	virtual string head(); string pad(int); virtual string dump(int=0);
 	virtual Sym* eval(Env*);
+	virtual Sym* pfxadd(); virtual Sym* pfxsub();
 };
-struct Env:Sym { Env(string); map<string,Sym*> lookup; };
+struct Env:Sym { Env(string); };
 extern Env env;
 
 struct Scalar:Sym { Scalar(string,string); Sym*eval(Env*); };
 
-struct Num:Scalar { Num(string); float val; string head(); };
-struct Int:Scalar { Int(string); int val; string head(); };
+struct Num:Scalar { Num(string); float val; string head();
+	Sym* pfxadd(); Sym* pfxsub(); };
+struct Int:Scalar { Int(string); int val; string head();
+	Sym* pfxadd(); Sym* pfxsub(); };
 struct Hex:Scalar { Hex(string); };
 struct Bin:Scalar { Bin(string); };
 
