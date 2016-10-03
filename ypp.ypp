@@ -8,10 +8,13 @@
 %token <o> EQ AT TILD			/* = @ ~					*/
 %type <o> ex scalar vector		/* expression scalar vector	*/
 
+%left EQ
+%left AT
 %left ADD SUB
 %left MUL DIV
 %left POW
 %left PFX
+%left TILD
 %%
 REPL : | REPL ex 			{ cout << $2->eval(&env)->dump() << endl; } ;
 scalar : SYM | NUM | STR ;
